@@ -101,7 +101,9 @@ function civicrm_api3_mailing_event_bounce($params) {
 
   $params += CRM_Mailing_BAO_BouncePattern::match($body);
 
+print_r($params);
   if (CRM_Mailing_Event_BAO_Bounce::create($params)) {
+die ("toto");
     return civicrm_api3_create_success($params);
   }
   else {
