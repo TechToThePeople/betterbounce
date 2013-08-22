@@ -6,11 +6,11 @@ require_once 'bounce2activity.civix.php';
  * Implementation of hook_civicrm_config
  */
 
-function bounce2activity_civicrm_apiWrapper (&$wrappersi,$apiRequest) {
+function bounce2activity_civicrm_apiWrapper (&$wrappers,$apiRequest) {
   if ("event_bounce" != $apiRequest ["action"] || "mailing" != $apiRequest ["entity"]) {
-    return; 
+//    return; 
   }
-  $wrappers[] = CRM_Utils_API_LogBounce::singleton();
+  $wrappers[] = CRM_Utils_API_BounceLogger::singleton();
 }
 
 
