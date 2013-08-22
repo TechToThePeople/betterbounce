@@ -1,0 +1,63 @@
+diff --git a/CRM/Utils/Hook.php b/CRM/Utils/Hook.php
+index 94fe5ee..c1552bb 100644
+--- a/CRM/Utils/Hook.php
++++ b/CRM/Utils/Hook.php
+@@ -1216,6 +1216,20 @@ abstract class CRM_Utils_Hook {
+   }
+ 
+   /**
++   * This hook is called before running an api call.
++   *
++   * @param $wrappers array of implements API_Wrapper(see CRM/Utils/API/ReloadOption.php as an example)
++   *
++   * @return null the return value is ignored
++   * @access public
++   */
++  static function apiWrappers (&$wrappers,$apiRequest) {
++    return self::singleton()->invoke(2, $wrappers, $apiRequest, self::$_nullObject, self::$_nullObject, self::$_nullObject,
++      'civicrm_apiWrapper'
++    );
++  }
++
++  /**
+    * This hook is called before running pending cron jobs.
+    *
+    * @param CRM_Core_JobManager $jobManager
+diff --git a/api/api.php b/api/api.php
+index 2564b18..f42d5ac 100644
+--- a/api/api.php
++++ b/api/api.php
+@@ -19,11 +19,20 @@
+  *   array to be passed to function
+  */
+ function civicrm_api($entity, $action, $params, $extra = NULL) {
++  $apiRequest = array();
++  $apiRequest['entity'] = CRM_Utils_String::munge($entity);
++  $apiRequest['action'] = CRM_Utils_String::munge($action);
++  $apiRequest['version'] = civicrm_get_api_version($params);
++  $apiRequest['params'] = $params;
++  $apiRequest['extra'] = $extra;
++
+   $apiWrappers = array(
+     CRM_Utils_API_HTMLInputCoder::singleton(),
+     CRM_Utils_API_NullOutputCoder::singleton(),
+     CRM_Utils_API_ReloadOption::singleton(),
+   );
++  CRM_Utils_Hook::apiWrappers($apiWrappers,$apiRequest);
++
+   try {
+     require_once ('api/v3/utils.php');
+     require_once 'api/Exception.php';
+@@ -32,12 +41,6 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
+     }
+     _civicrm_api3_initialize();
+     $errorScope = CRM_Core_TemporaryErrorScope::useException();
+-    $apiRequest = array();
+-    $apiRequest['entity'] = CRM_Utils_String::munge($entity);
+-    $apiRequest['action'] = CRM_Utils_String::munge($action);
+-    $apiRequest['version'] = civicrm_get_api_version($params);
+-    $apiRequest['params'] = $params;
+-    $apiRequest['extra'] = $extra;
+     // look up function, file, is_generic
+     $apiRequest += _civicrm_api_resolve($apiRequest);
+     if (strtolower($action) == 'create' || strtolower($action) == 'delete') {
