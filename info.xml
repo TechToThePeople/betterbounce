@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<extension key="eu.tttp.bounce2activity" type="module">
-  <file>bounce2activity</file>
+<extension key="eu.tttp.betterbounce" type="module">
+  <file>betterbounce</file>
   <name>Save bounces as activity, with the detail of the bounce message</name>
-  <description>FIXME</description>
+  <description>This extensions creates a new activity type "bounce". When there is a new bounce, it creates it (with the mail text as an activity to the contact bouncing)</description>
   <license>agpl3</license>
   <maintainer>
     <author>Xavier dutoit</author>
@@ -12,10 +12,9 @@
   <version>1.0</version>
   <develStage>beta</develStage>
   <compatibility>
-    <ver>4.3</ver>
     <ver>4.4</ver>
   </compatibility>
   <civix>
-    <namespace>CRM/Bounce2activity</namespace>
+    <namespace>BetterBounce</namespace>
   </civix>
 </extension>
