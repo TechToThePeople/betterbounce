@@ -24,14 +24,19 @@ index 628c6ea..100fdd6 100644
     *
     * @param CRM_Core_JobManager $jobManager
 diff --git a/api/api.php b/api/api.php
-index 0f70507..b8322af 100644
+index 0f70507..09c95bf 100644
 --- a/api/api.php
 +++ b/api/api.php
-@@ -19,7 +19,11 @@
+@@ -19,7 +19,16 @@
   *   array to be passed to function
   */
  function civicrm_api($entity, $action, $params, $extra = NULL) {
-+  $apiRequest += _civicrm_api_resolve($apiRequest);
++  $apiRequest = array();
++  $apiRequest['entity'] = CRM_Utils_String::munge($entity);
++  $apiRequest['action'] = CRM_Utils_String::munge($action);
++  $apiRequest['version'] = civicrm_get_api_version($params);
++  $apiRequest['params'] = $params;
++  $apiRequest['extra'] = $extra;
 +
    $apiWrappers = array(CRM_Core_HTMLInputCoder::singleton());
 +  CRM_Utils_Hook::apiWrappers($apiWrappers,$apiRequest);
@@ -39,7 +44,7 @@ index 0f70507..b8322af 100644
    try {
      require_once ('api/v3/utils.php');
      require_once 'api/Exception.php';
-@@ -28,14 +32,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
+@@ -28,14 +37,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
      }
      _civicrm_api3_initialize();
      $errorScope = CRM_Core_TemporaryErrorScope::useException();
@@ -51,6 +56,7 @@ index 0f70507..b8322af 100644
 -    $apiRequest['extra'] = $extra;
      // look up function, file, is_generic
 -    $apiRequest += _civicrm_api_resolve($apiRequest);
++    $apiRequest += _civicrm_api_resolve($apiRequest);  
      if (strtolower($action) == 'create' || strtolower($action) == 'delete') {
        $apiRequest['is_transactional'] = 1;
        $transaction = new CRM_Core_Transaction();
